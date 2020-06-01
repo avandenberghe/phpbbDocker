@@ -22,12 +22,7 @@ docker-compose up -d
 - then, restart your container. 
 
 ### 3) phpBB
-Open a browser with the server URL:
-
-```sh
-open "http://localhost:8082/phpBB3"
-```
-
+Open a browser with the server URL "http://localhost:8082/phpBB3"
 
 ## License
 Released under the [MIT license](https://opensource.org/licenses/MIT).
