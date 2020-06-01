@@ -22,6 +22,7 @@ db_migrate() {
 echo '$PHPBB_INSTALLED = ' $PHPBB_INSTALLED
 chown -R www-data:www-data /var/www/html
 cd /var/www/html
+php -f testdb.php
 
 # only run when not installed.
 if [ "$PHPBB_INSTALLED" = false ]; then
@@ -35,18 +36,18 @@ if [ "$PHPBB_INSTALLED" = false ]; then
   # Wait 10 seconds before install  
   sleep 10
   cd /var/www/html/phpBB3/install
-  php ./phpbbcli.php install install-config.yml  
-  # Wait 30 seconds after install  
-  sleep 30
-  # rename install directory 
-  mv /var/www/html/phpBB3/install /var/www/html/phpBB3/installold
-  echo 'End PHPBB Install'
+  #php ./phpbbcli.php install install-config.yml  
+  # Wait 10 seconds after install  
+  sleep 10
+  # rename install directory   
+  # mv /var/www/html/phpBB3/install /var/www/html/phpBB3/install
+  # mv install install1
+  echo 'End PHPBB config. please install'
+  cd /var/www/html
 elif [ "$AUTO_DB_MIGRATE" = true ]; then
   # Run db migration as background process:
   db_migrate &
 fi
-
-php -f testdb.php
 
 # keep apache service running in foreground 
 exec apache2-foreground "$@"

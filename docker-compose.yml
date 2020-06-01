@@ -23,7 +23,7 @@ services:
       - 8082:80
     environment:
       SERVER_NAME: localhost
-      PHPBB_INSTALLED: 'false'
+      PHPBB_INSTALLED: 'true'
       AUTO_DB_MIGRATE: 'false'
     volumes:
       - ./files:/var/www/html/files
