@@ -1,0 +1,32 @@
+version: '3.3'
+services:
+  container1:
+    image: mariadb:10.5.3
+    container_name: mysql
+    volumes:
+      - ./mysql:/var/lib/mysql  
+    restart: always   
+    environment:
+      MYSQL_DATABASE: phpbb
+      MYSQL_USER: phpbb
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: geheim2
+    ports:
+       # <Port exposed> : < MySQL Port running inside container>
+      - "6303:3306"     
+  container2:
+    # build dockerfile to initialise phpBB
+    build: .
+    depends_on:
+      - container1
+    ports:
+      - 8082:80
+    environment:
+      SERVER_NAME: localhost
+      PHPBB_INSTALLED: 'false'
+      AUTO_DB_MIGRATE: 'false'
+    volumes:
+      - ./files:/var/www/html/files
+      - ./store:/var/www/html/store
+      - ./avatars-upload:/var/www/html/images/avatars/upload
+

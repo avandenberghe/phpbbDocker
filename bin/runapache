@@ -1,0 +1,52 @@
+#!/bin/sh
+# shellcheck shell=dash
+#
+# Installs phpBB
+# https://github.com/phpbb/documentation/blob/master/development/cli/getting_started.rst
+
+# Exit immediately if a command exits with a non-zero status:
+
+
+db_migrate() {
+  local store=/var/www/html/store
+  # Wait 5 seconds for the db server to be available:
+  sleep 5
+  # Run db migration via phpBB CLI and log stdout and stderr to files:
+  php bin/phpbbcli.php db:migrate \
+    >> "$store"/db_migrate_out_"$(date +%s)".log \
+    2>> "$store"/db_migrate_err_"$(date +%s)".log
+  # Remove log files which are empty or older than 30 days:
+  find "$store" -type f -name '*.log' \( -empty -o -mtime +30 \) -exec rm {} +
+}
+
+echo '$PHPBB_INSTALLED = ' $PHPBB_INSTALLED
+chown -R www-data:www-data /var/www/html
+cd /var/www/html
+
+# only run when not installed.
+if [ "$PHPBB_INSTALLED" = false ]; then
+  echo 'Start PHPBB Install'
+  chown -R www-data:www-data /var/www/html/phpBB3
+  chmod -R 775 /var/www/html/phpBB3
+  chmod -R 777 /var/www/html/phpBB3/cache
+  chmod -R 777 /var/www/html/phpBB3/files
+  chmod -R 777 /var/www/html/phpBB3/store
+  chmod -R 777 /var/www/html/phpBB3/images/avatars/upload
+  # Wait 10 seconds before install  
+  sleep 10
+  cd /var/www/html/phpBB3/install
+  php ./phpbbcli.php install install-config.yml  
+  # Wait 30 seconds after install  
+  sleep 30
+  # rename install directory 
+  mv /var/www/html/phpBB3/install /var/www/html/phpBB3/installold
+  echo 'End PHPBB Install'
+elif [ "$AUTO_DB_MIGRATE" = true ]; then
+  # Run db migration as background process:
+  db_migrate &
+fi
+
+php -f testdb.php
+
+# keep apache service running in foreground 
+exec apache2-foreground "$@"
