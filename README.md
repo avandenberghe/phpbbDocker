@@ -17,9 +17,9 @@ https://docs.docker.com/desktop/
 ```sh
 docker-compose up -d
 ```
-then, stop your container. 
-change the value of PHPBB_INSTALLED to false
-then, restart your container. 
+- then, stop your container. 
+- change the value of PHPBB_INSTALLED to false
+- then, restart your container. 
 
 ### 3) phpBB
 Open a browser with the server URL:
